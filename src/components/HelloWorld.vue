@@ -31,6 +31,8 @@
     <ul>
       <li>
         <router-link :to="{ name: 'login' }">Login page</router-link>
+        <br>
+        <router-link :to="{ name: 'form' }">Form</router-link>
       </li>
     </ul>
   </div>
