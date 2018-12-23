@@ -10,6 +10,8 @@
                         <v-card-text>
                            <v-select
                                    :items="specializations"
+                                   item-value="uniqueTitle"
+                                   item-text="title"
                                    label="Specialization"
                                    v-model="form.specialization"
                            ></v-select>
@@ -22,6 +24,8 @@
                         <v-card-text>
                             <v-select
                                     :items="doctors"
+                                    item-value="fullName"
+                                    item-text=""
                                     label="Doctor"
                                     v-model="form.doctor"
                             ></v-select>
@@ -55,19 +59,19 @@
                         </v-toolbar>
                         <v-card-text>
                             <v-text-field
-                                    label="First Name"
+                                    label="Фамилия"
+                                    type="text"
+                                    v-model="form.lastName"
+                            ></v-text-field>
+                            <v-text-field
+                                    label="Имя"
                                     type="text"
                                     v-model="form.firstName"
                             ></v-text-field>
                             <v-text-field
-                                    label="Middle Name"
+                                    label="Отчество"
                                     type="text"
-                                    v-model="form.middleName"
-                            ></v-text-field>
-                            <v-text-field
-                                    label="Last Name"
-                                    type="text"
-                                    v-model="form.lastName"
+                                    v-model="form.patronymic"
                             ></v-text-field>
                             <v-dialog
                                     ref="dobDialog"
@@ -200,20 +204,6 @@
                             </v-dialog>
                         </v-card-text>
                     </v-card>
-                    <v-card class="elevation-12"
-                            v-if="isContractService"
-                    >
-                        <v-toolbar dark color="primary">
-                            <v-toolbar-title>Contract details</v-toolbar-title>
-                        </v-toolbar>
-                        <v-card-text>
-                            <v-text-field
-                                    label="Enterprise name"
-                                    type="text"
-                                    v-model="form.contractEnterpriseName"
-                            ></v-text-field>
-                        </v-card-text>
-                    </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Notes</v-toolbar-title>
@@ -234,6 +224,8 @@
 
 <script>
   import moment from 'moment'
+  import api from '@/api/api'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'Form',
@@ -246,29 +238,29 @@
         ],
         dobModal: false,
         genders: [
-          'Male',
-          'Female',
+          'Мужской',
+          'Женский',
         ],
         form: {
           specialization: null,
           doctor: null,
           date: moment().format('YYYY-MM-DD'),
-          firstName: '',
-          lastName: '',
-          middleName: '',
-          dob: null,
-          nationality: null,
-          gender: null,
+          time: '',
+          firstName: this.user ? this.user.firstName : '',
+          lastName: this.user ? this.user.lastName : '',
+          patronymic: this.user ? this.user.patronymic : '',
+          dob: this.user ? this.user.dob : null,
+          nationality: this.user ? this.user.nationality : null,
+          gender: this.user ? this.user.gender : null,
           address: '',
           phone: '',
-          email: '',
+          email: this.user ? this.user.email : '',
           service: null,
           notes: '',
           insuranceCompany: null,
           insurancePolicyNumber: '',
           insurancePolicyStartDate: null,
-          insurancePolicyEndDate: null,
-          contractEnterpriseName: ''
+          insurancePolicyEndDate: null
         },
         insuranceCompanies: [
           'Company 1',
@@ -281,26 +273,10 @@
         insurancePolicyStartDateModal: false,
         serviceForms: [
           {text: 'Paid', value: 'paid'},
-          {text: 'Medical insurance', value: 'insurance'},
-          {text: 'Under contract with the enterprise', value: 'contract'},
+          {text: 'Medical insurance', value: 'insurance'}
         ],
-        specializations: [
-            'Abdominal Radiology Radiology-Diagnostic',
-            'Addiction Psychiatry Psychiatry',
-            'Adolescent Medicine Pediatrics',
-            'Adult Cardiothoracic Anesthesiology Anesthesiology',
-            'Adult Reconstructive Orthopaedics Orthopaedic Surgery',
-            'Advanced Heart Failure & Transplant Cardiology Internal Medicine',
-            'Allergy & Immunology',
-            'Anesthesiology',
-        ],
-        doctors: [
-          'Doctor 1',
-          'Doctor 2',
-          'Doctor 3',
-          'Doctor 4',
-          'Doctor 5',
-        ]
+        specializations: [],
+        doctors: []
       }
     },
     computed: {
@@ -312,17 +288,21 @@
       isInsuranceService: function () {
         return this.form.service === 'insurance'
       },
-      isContractService: function () {
-        return this.form.service === 'contract'
-      },
       maxDobDate: function () {
         return moment().format('YYYY-MM-DD')
       },
       minDateOfVisit: function () {
         return moment().format('YYYY-MM-DD')
-      }
+      },
+      ...mapState({
+        user: state => state.auth.user
+      })
     },
     watch: {
+      'form.specialization': async function (specialization) {
+        this.doctors = (await api.doctors(specialization)).data
+          .map(doc => `${doc.lastName} ${doc.firstName} ${doc.patronymic}`)
+      },
       'form.service': function (currentService) {
         switch (currentService) {
           case 'paid': {
@@ -339,7 +319,24 @@
             break;
           }
         }
+      },
+      user: {
+        immediate: true,
+        handler: function (user) {
+          if (user) {
+            this.form.firstName = user.firstName
+            this.form.lastName = user.lastName
+            this.form.patronymic = user.patronymic
+            this.form.dob = user.dob
+            this.form.nationality =  user.nationality
+            this.form.gender =  user.gender
+            this.form.email =  user.email
+          }
+        }
       }
+    },
+    async created () {
+      this.specializations = (await api.specializations()).data;
     },
     methods: {
       resetContractInformation () {
