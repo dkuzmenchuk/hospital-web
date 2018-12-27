@@ -4,7 +4,7 @@
             dark
     >
         <v-toolbar-items>
-            <v-btn flat @click="$router.push({ name: 'home' })">Hospital</v-btn>
+            <v-btn flat @click="$router.push({ name: 'home' })">Больница</v-btn>
         </v-toolbar-items>
 
         <v-divider
@@ -13,7 +13,7 @@
                 vertical
         ></v-divider>
 
-        <span class="subheading">My Home</span>
+        <span class="subheading">{{ $route.meta.title }}</span>
 
         <v-spacer></v-spacer>
 
@@ -46,7 +46,7 @@
         items: [
           { title: 'Врачи', icon: 'dashboard', name: 'specializations' },
           { title: 'Записаться на прием', icon: 'question_answer', name: 'form' },
-          { title: 'Login', icon: 'question_answer', name: 'login' }
+          { title: 'Войти', icon: 'question_answer', name: 'login' }
         ]
       }
     }

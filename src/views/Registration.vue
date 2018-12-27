@@ -76,7 +76,7 @@
   import moment from 'moment'
 
   export default {
-    name: 'Login',
+    name: 'Registration',
     data () {
       return {
         credentials: {

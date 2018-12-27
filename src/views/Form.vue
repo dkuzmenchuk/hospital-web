@@ -5,41 +5,43 @@
                 <v-flex xs12 sm8 md4>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Specialization</v-toolbar-title>
+                            <v-toolbar-title>Специализация врача</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                            <v-select
                                    :items="specializations"
                                    item-value="uniqueTitle"
                                    item-text="title"
-                                   label="Specialization"
+                                   label="Специализация врача"
                                    v-model="form.specialization"
                            ></v-select>
                         </v-card-text>
                     </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Doctor</v-toolbar-title>
+                            <v-toolbar-title>Врач</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-select
                                     :items="doctors"
                                     item-value="fullName"
                                     item-text=""
-                                    label="Doctor"
+                                    label="Врач"
                                     v-model="form.doctor"
                             ></v-select>
                         </v-card-text>
                     </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Date</v-toolbar-title>
+                            <v-toolbar-title>Дата посещения</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-date-picker
                                     v-model="form.date"
                                     full-width
                                     landscape
+                                    locale="ru-ru"
+                                    :allowed-dates="allowedDates"
                                     :min="minDateOfVisit"
                                     class="mt-3"
                             ></v-date-picker>
@@ -47,94 +49,41 @@
                     </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Time</v-toolbar-title>
+                            <v-toolbar-title>Время посещения</v-toolbar-title>
                         </v-toolbar>
-                        <v-card-text>
-                            There will be time picker
-                        </v-card-text>
-                    </v-card>
-                    <v-card class="elevation-12">
-                        <v-toolbar dark color="primary">
-                            <v-toolbar-title>Personal data</v-toolbar-title>
-                        </v-toolbar>
-                        <v-card-text>
-                            <v-text-field
-                                    label="Фамилия"
-                                    type="text"
-                                    v-model="form.lastName"
-                            ></v-text-field>
-                            <v-text-field
-                                    label="Имя"
-                                    type="text"
-                                    v-model="form.firstName"
-                            ></v-text-field>
-                            <v-text-field
-                                    label="Отчество"
-                                    type="text"
-                                    v-model="form.patronymic"
-                            ></v-text-field>
-                            <v-dialog
-                                    ref="dobDialog"
-                                    v-model="dobModal"
-                                    :return-value.sync="form.dob"
-                                    persistent
-                                    lazy
-                                    full-width
-                                    width="290px"
-                            >
-                                <v-text-field
-                                        slot="activator"
-                                        v-model="form.dob"
-                                        label="Date of Birth"
-                                        readonly
-                                ></v-text-field>
-                                <v-date-picker
-                                        :max="maxDobDate"
-                                        v-model="form.dob"
-                                        scrollable
+                        <v-card-text class="time-array-list-container">
+                            <v-list>
+                                <v-list-tile
+                                        v-if="allowedTimeArray.length === 0"
                                 >
-                                    <v-spacer></v-spacer>
-                                    <v-btn flat color="primary" @click="dobModal = false">Cancel</v-btn>
-                                    <v-btn flat color="primary" @click="$refs.dobDialog.save(form.dob)">OK</v-btn>
-                                </v-date-picker>
-                            </v-dialog>
-                            <v-select
-                                    :items="genders"
-                                    label="Gender"
-                                    v-model="form.gender"
-                            ></v-select>
-                            <v-select
-                                    :items="countries"
-                                    label="Nationality"
-                                    v-model="form.nationality"
-                            ></v-select>
-                            <v-text-field
-                                    label="Address"
-                                    type="text"
-                                    v-model="form.address"
-                            ></v-text-field>
-                            <v-text-field
-                                    label="Phone"
-                                    type="text"
-                                    v-model="form.phone"
-                            ></v-text-field>
-                            <v-text-field
-                                    label="Email"
-                                    type="text"
-                                    v-model="form.email"
-                            ></v-text-field>
+                                    <v-list-tile-content>
+                                        Выберите врача и дату, чтобы увидеть свободное для записи время
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                                <v-list-tile
+                                        v-for="time in allowedTimeArray"
+                                        :key="time"
+                                        class="time-array-list-tile"
+                                        :class="{'time-array-list-tile_selected': form.time === time}"
+                                        @click="selectTime(time)"
+                                >
+                                    <v-list-tile-content>
+                                        {{ time | hm_time }} - свободно
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                            </v-list>
                         </v-card-text>
                     </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Service form</v-toolbar-title>
+                            <v-toolbar-title>Форма обслуживания</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-select
                                     :items="serviceForms"
                                     item-text="text"
                                     item-value="value"
-                                    label="Service form"
+                                    label="Форма обслуживания"
                                     v-model="form.service"
                             ></v-select>
                         </v-card-text>
@@ -143,16 +92,16 @@
                             v-if="isInsuranceService"
                     >
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Insurance details</v-toolbar-title>
+                            <v-toolbar-title>Информация о страховке</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-select
                                     :items="insuranceCompanies"
-                                    label="Insurance Company"
+                                    label="Страховая компания"
                                     v-model="form.insuranceCompany"
                             ></v-select>
                             <v-text-field
-                                    label="Insurance policy number"
+                                    label="Номер страхового полиса"
                                     type="text"
                                     v-model="form.insurancePolicyNumber"
                             ></v-text-field>
@@ -168,12 +117,16 @@
                                 <v-text-field
                                         slot="activator"
                                         v-model="form.insurancePolicyStartDate"
-                                        label="Insurance Policy Start Date"
+                                        label="Дата начала действия полиса"
                                         readonly
                                 ></v-text-field>
-                                <v-date-picker v-model="form.insurancePolicyStartDate" scrollable>
+                                <v-date-picker
+                                        locale="ru-ru"
+                                        v-model="form.insurancePolicyStartDate"
+                                        scrollable
+                                >
                                     <v-spacer></v-spacer>
-                                    <v-btn flat color="primary" @click="insurancePolicyStartDateModal = false">Cancel</v-btn>
+                                    <v-btn flat color="primary" @click="insurancePolicyStartDateModal = false">Отмена</v-btn>
                                     <v-btn flat color="primary" @click="$refs.insurancePolicyStartDate.save(form.insurancePolicyStartDate)">OK</v-btn>
                                 </v-date-picker>
                             </v-dialog>
@@ -189,16 +142,17 @@
                                 <v-text-field
                                         slot="activator"
                                         v-model="form.insurancePolicyEndDate"
-                                        label="Insurance Policy End Date"
+                                        label="Дата окончания действия полиса"
                                         readonly
                                 ></v-text-field>
                                 <v-date-picker
                                         :min="insurancePolicyEndDateMin"
+                                        locale="ru-ru"
                                         v-model="form.insurancePolicyEndDate"
                                         scrollable
                                 >
                                     <v-spacer></v-spacer>
-                                    <v-btn flat color="primary" @click="insurancePolicyEndDateModal = false">Cancel</v-btn>
+                                    <v-btn flat color="primary" @click="insurancePolicyEndDateModal = false">Отмена</v-btn>
                                     <v-btn flat color="primary" @click="$refs.insurancePolicyEndDate.save(form.insurancePolicyEndDate)">OK</v-btn>
                                 </v-date-picker>
                             </v-dialog>
@@ -206,16 +160,17 @@
                     </v-card>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Notes</v-toolbar-title>
+                            <v-toolbar-title>Дополнительная информация</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-textarea
                                     auto-grow
-                                    label="Notes"
+                                    label="Дополнительная информация"
                                     v-model="form.notes"
                             ></v-textarea>
                         </v-card-text>
                     </v-card>
+                    <v-btn dark color="teal" @click="apply">Оформить заявку</v-btn>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -225,36 +180,17 @@
 <script>
   import moment from 'moment'
   import api from '@/api/api'
-  import { mapState } from 'vuex'
+  import groupBy from 'lodash/groupBy'
 
   export default {
     name: 'Form',
     data () {
       return {
-        countries: [
-          'Belarus',
-          'Russia',
-          'Ukraine'
-        ],
-        dobModal: false,
-        genders: [
-          'Мужской',
-          'Женский',
-        ],
         form: {
           specialization: null,
           doctor: null,
           date: moment().format('YYYY-MM-DD'),
           time: '',
-          firstName: this.user ? this.user.firstName : '',
-          lastName: this.user ? this.user.lastName : '',
-          patronymic: this.user ? this.user.patronymic : '',
-          dob: this.user ? this.user.dob : null,
-          nationality: this.user ? this.user.nationality : null,
-          gender: this.user ? this.user.gender : null,
-          address: '',
-          phone: '',
-          email: this.user ? this.user.email : '',
           service: null,
           notes: '',
           insuranceCompany: null,
@@ -272,11 +208,12 @@
         insurancePolicyEndDateModal: false,
         insurancePolicyStartDateModal: false,
         serviceForms: [
-          {text: 'Paid', value: 'paid'},
-          {text: 'Medical insurance', value: 'insurance'}
+          {text: 'Платное посещение', value: 'PAID'},
+          {text: 'Медицинская страховка', value: 'INSURANCE'}
         ],
         specializations: [],
-        doctors: []
+        doctors: [],
+        availableTime: {}
       }
     },
     computed: {
@@ -286,7 +223,7 @@
           : moment(this.form.insurancePolicyStartDate).add(1, 'day').format('YYYY-MM-DD')
       },
       isInsuranceService: function () {
-        return this.form.service === 'insurance'
+        return this.form.service === 'INSURANCE'
       },
       maxDobDate: function () {
         return moment().format('YYYY-MM-DD')
@@ -294,53 +231,39 @@
       minDateOfVisit: function () {
         return moment().format('YYYY-MM-DD')
       },
-      ...mapState({
-        user: state => state.auth.user
-      })
+      allowedDatesArray: function () {
+        return Object.keys(this.availableTime)
+      },
+      allowedTimeArray: function () {
+        const items = this.availableTime[this.form.date]
+        const time = items ? items.map(item => item.time) : []
+
+        return time.sort()
+      }
     },
     watch: {
       'form.specialization': async function (specialization) {
         this.doctors = (await api.doctors(specialization)).data
           .map(doc => `${doc.lastName} ${doc.firstName} ${doc.patronymic}`)
       },
+      'form.doctor': async function (doctor) {
+        this.availableTime = groupBy((await api.time(this.form.specialization, doctor)).data, 'date')
+      },
       'form.service': function (currentService) {
-        switch (currentService) {
-          case 'paid': {
-            this.resetContractInformation();
-            this.resetInsuranceInformation();
-            break;
-          }
-          case 'insurance': {
-            this.resetContractInformation();
-            break;
-          }
-          case 'contract': {
-            this.resetInsuranceInformation();
-            break;
-          }
+        if (currentService === 'paid') {
+          this.resetInsuranceInformation()
         }
       },
-      user: {
-        immediate: true,
-        handler: function (user) {
-          if (user) {
-            this.form.firstName = user.firstName
-            this.form.lastName = user.lastName
-            this.form.patronymic = user.patronymic
-            this.form.dob = user.dob
-            this.form.nationality =  user.nationality
-            this.form.gender =  user.gender
-            this.form.email =  user.email
-          }
-        }
+      'form.date': function () {
+        this.form.time = ''
       }
     },
     async created () {
       this.specializations = (await api.specializations()).data;
     },
     methods: {
-      resetContractInformation () {
-        this.form.contractEnterpriseName = ''
+      allowedDates (val) {
+        return this.allowedDatesArray.includes(val)
       },
       resetInsuranceInformation () {
         this.form.insuranceCompany = null;
@@ -348,13 +271,29 @@
         this.form.insurancePolicyStartDate = null;
         this.form.insurancePolicyEndDate = null
       },
-      apply () {
-        return true
+      selectTime (time) {
+        this.form.time = time;
+      },
+      async apply () {
+        const { data: response } = await api.createOrder(this.form)
+
+        console.log(response)
       }
     }
   }
 </script>
 
 <style scoped>
-
+    .time-array-list-container.v-card__text {
+        padding: 0;
+    }
+    .time-array-list-item, .time-array-list-tile:hover {
+        cursor: pointer;
+    }
+    .time-array-list-tile:hover {
+        background-color: #B2DFDB;
+    }
+    .time-array-list-tile_selected, .time-array-list-tile_selected:hover {
+        background-color: #80CBC4;
+    }
 </style>

@@ -14,7 +14,7 @@
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
-                            <v-btn color="primary"  @click.native="login">Авторизоваться</v-btn>
+                            <v-btn color="primary"  @click.native="login">Войти</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-flex>
