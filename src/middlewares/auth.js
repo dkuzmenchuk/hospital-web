@@ -7,5 +7,5 @@ export default async function auth({ next, router, store }) {
 
   await store.dispatch('profile')
 
-  next()
+  return await next()
 }

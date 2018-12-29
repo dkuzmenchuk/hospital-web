@@ -123,7 +123,7 @@ async function nextFactory(context, middleware, index) {
     context.next(...parameters)
     // Then run the subsequent Middleware with a new
     // `nextMiddleware()` callback.
-    const nextMiddleware = nextFactory(context, middleware, index + 1)
+    const nextMiddleware = await nextFactory(context, middleware, index + 1)
     await subsequentMiddleware({...context, next: nextMiddleware})
   };
 }
@@ -141,7 +141,7 @@ router.beforeEach(async (to, from, next) => {
       router,
       to,
     }
-    const nextMiddleware = nextFactory(context, middleware, 1)
+    const nextMiddleware = await nextFactory(context, middleware, 1)
 
     return await middleware[0]({...context, next: nextMiddleware})
   }
