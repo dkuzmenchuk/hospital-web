@@ -1,8 +1,8 @@
 <template>
     <v-content>
         <v-container fluid>
-            <v-layout>
-                <v-flex>
+            <v-layout justify-center>
+                <v-flex xs12 sm8 md4>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Профиль</v-toolbar-title>
@@ -57,14 +57,13 @@
                                     type="text"
                                     v-model="credentials.phone"
                             ></v-text-field>
-                            <v-text-field prepend-icon="lock" name="password" label="Пароль" id="password" type="password" v-model="credentials.password"></v-text-field>
-                            <v-text-field prepend-icon="lock" name="password" label="Подтверждение пароля" id="password_confirmation" type="password" v-model="credentials.passwordConfirmation"></v-text-field>
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
                             <v-btn color="primary"  @click.native="update">Обновить профиль</v-btn>
                         </v-card-actions>
                     </v-card>
+                    <v-btn dark color="primary" @click="updatePassword">Обновить пароль</v-btn>
                 </v-flex>
             </v-layout>
         </v-container>
@@ -85,8 +84,6 @@
           lastName: '',
           patronymic: '',
           email: '',
-          password: '',
-          passwordConfirmation: '',
           dob: null,
           nationality: null,
           gender: null,
@@ -99,9 +96,9 @@
           'Женский',
         ],
         countries: [
-          'Belarus',
-          'Russia',
-          'Ukraine'
+          'Республика Беларусь',
+          'Российская Федерация',
+          'Украина',
         ]
       };
     },
@@ -127,12 +124,12 @@
       }
     },
     methods: {
-      update: async () => {
+      async update () {
         const response = await api.updateProfile(this.credentials)
 
         console.log(response.data)
       },
-      prefillCredentials(user) {
+      prefillCredentials (user) {
         if (user) {
           this.credentials.firstName = user.firstName
           this.credentials.lastName = user.lastName
@@ -144,6 +141,9 @@
           this.credentials.address = user.address
           this.credentials.phone = user.phone
         }
+      },
+      updatePassword() {
+        this.$router.push({ name: 'update-password' })
       }
     }
   }

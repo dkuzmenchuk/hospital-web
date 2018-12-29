@@ -6,6 +6,7 @@ export default {
 
   profile: () => api.get('/profile'),
   updateProfile: data => api.post('/profile', data),
+  updatePassword: data => api.post('/updatePassword', data),
 
   specializations: () => api.get('/specializations'),
   doctors: specialization => api.get(`/specializations/${specialization}`),

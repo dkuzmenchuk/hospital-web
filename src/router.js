@@ -10,6 +10,7 @@ import ClientCard from './views/ClientCard.vue'
 import CardReport from './views/CardReport.vue'
 import Orders from './views/Orders.vue'
 import Profile from './views/Profile.vue'
+import UpdatePassword from './views/UpdatePassword.vue'
 
 import store from './store'
 
@@ -59,6 +60,15 @@ const router = new Router({
       component: Profile,
       meta: {
         title: 'Профиль',
+        middleware: auth,
+      }
+    },
+    {
+      path: '/update-password',
+      name: 'update-password',
+      component: UpdatePassword,
+      meta: {
+        title: 'Обновление пароля',
         middleware: auth,
       }
     },
