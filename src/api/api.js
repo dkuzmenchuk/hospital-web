@@ -11,5 +11,6 @@ export default {
   time: (specialization, doctor) => api.post('/time', { specialization, doctor }),
 
   createOrder: data => api.post('/order', data),
-  listOrders: (status) => api.get('/order', { params: { status } })
+  listOrders: status => api.get('/order', { params: { status } }),
+  cancelOrder: id => api.post(`/order/${id}/cancel`)
 }

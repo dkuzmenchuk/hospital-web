@@ -24,7 +24,7 @@
                                                 <v-list-tile-sub-title>Форма обслуживания: {{ translateService(item.service) }}</v-list-tile-sub-title>
                                             </v-flex>
                                             <v-flex md2>
-                                                <v-btn dark color="red lighten-1" @click="cancel">Отменить</v-btn>
+                                                <v-btn dark color="red lighten-1" @click="cancel(item.id)">Отменить</v-btn>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -62,8 +62,10 @@
             return ''
         }
       },
-      cancel: () => {
-        return true
+      cancel: async id => {
+        const result = (await api.cancelOrder(id)).data
+
+        console.log(result)
       }
     }
   }
