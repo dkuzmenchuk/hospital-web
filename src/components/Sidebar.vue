@@ -33,6 +33,15 @@
                 <v-divider vertical></v-divider>
                 <v-btn
                         flat
+                        @click="$router.push('orders')"
+                >Записи</v-btn>
+                <v-divider vertical></v-divider><v-btn
+                        flat
+                        @click="$router.push('card')"
+                >Карточка</v-btn>
+                <v-divider vertical></v-divider>
+                <v-btn
+                        flat
                         @click="$router.push('profile')"
                 >Профиль</v-btn>
             </template>
