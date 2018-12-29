@@ -18,37 +18,43 @@
         <v-spacer></v-spacer>
 
         <v-toolbar-items>
-            <template
-                    v-for="item in items"
-            >
+            <v-divider vertical></v-divider>
+
+            <template v-if="isLoggedIn">
                 <v-btn
-                        :key="'btn-' + item.title"
                         flat
-                        @click="$router.push({ name: item.name })"
-                >
-                    {{ item.title }}
-                </v-btn>
-                <v-divider
-                        :key="'divider-' + item.title"
-                        vertical
-                ></v-divider>
+                        @click="$router.push('specializations')"
+                >Врачи</v-btn>
+                <v-divider vertical></v-divider>
+                <v-btn
+                        flat
+                        @click="$router.push('form')"
+                >Записаться на прием</v-btn>
+                <v-divider vertical></v-divider>
+                <v-btn
+                        flat
+                        @click="$router.push('profile')"
+                >Профиль</v-btn>
+            </template>
+            <template v-else>
+                <v-btn
+                        flat
+                        @click="$router.push('login')"
+                >Войти</v-btn>
             </template>
         </v-toolbar-items>
-        <v-toolbar-side-icon></v-toolbar-side-icon>
     </v-toolbar>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+
   export default {
     name: 'Sidebar',
-    data () {
-      return {
-        items: [
-          { title: 'Врачи', icon: 'dashboard', name: 'specializations' },
-          { title: 'Записаться на прием', icon: 'question_answer', name: 'form' },
-          { title: 'Войти', icon: 'question_answer', name: 'login' }
-        ]
-      }
+    computed: {
+      ...mapGetters([
+        'isLoggedIn',
+      ])
     }
   }
 </script>

@@ -18,6 +18,7 @@ import auth from './middlewares/auth'
 Vue.use(Router)
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
