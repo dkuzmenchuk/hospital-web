@@ -74,6 +74,7 @@
 <script>
   import api from '@/api/api'
   import moment from 'moment'
+  import { mapState } from 'vuex'
 
   export default {
     name: 'Profile',
@@ -110,13 +111,39 @@
       },
       minDateOfVisit: function () {
         return moment().format('YYYY-MM-DD')
+      },
+      ...mapState({
+        user: state => state.auth.user,
+      })
+    },
+    created () {
+      this.prefillCredentials(this.user)
+    },
+    watch: {
+      user: {
+        handler: function (user) {
+          this.prefillCredentials(user)
+        }
       }
     },
     methods: {
-      async update () {
+      update: async () => {
         const response = await api.updateProfile(this.credentials)
 
         console.log(response.data)
+      },
+      prefillCredentials(user) {
+        if (user) {
+          this.credentials.firstName = user.firstName
+          this.credentials.lastName = user.lastName
+          this.credentials.patronymic = user.patronymic
+          this.credentials.email = user.email
+          this.credentials.dob = user.dob
+          this.credentials.nationality = user.nationality
+          this.credentials.gender = user.gender
+          this.credentials.address = user.address
+          this.credentials.phone = user.phone
+        }
       }
     }
   }
