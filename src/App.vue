@@ -14,9 +14,6 @@
     name: 'App',
     components: {
       Sidebar
-    },
-    async created () {
-      await this.$store.dispatch('profile')
     }
   }
 </script>

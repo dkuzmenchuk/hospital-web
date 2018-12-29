@@ -68,7 +68,7 @@
                 </v-textarea>
             </v-card-text>
             <v-card-actions>
-                <v-btn dark color="teal">Сохранить</v-btn>
+                <v-btn dark color="teal" @click="update">Сохранить</v-btn>
             </v-card-actions>
         </v-card>
     </v-container>
@@ -88,6 +88,11 @@
           conclusion: '',
           recommendations: '',
         }
+      }
+    },
+    methods: {
+      update: async () => {
+        return true;
       }
     }
   }

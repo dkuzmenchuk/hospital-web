@@ -1,5 +1,7 @@
 import Vue from 'vue'
+
 import Router from 'vue-router'
+
 import Home from './views/Home.vue'
 import Form from './views/Form.vue'
 import Doctors from './views/Doctors.vue'
@@ -7,17 +9,22 @@ import Specializations from './views/Specializations.vue'
 import ClientCard from './views/ClientCard.vue'
 import CardReport from './views/CardReport.vue'
 import Orders from './views/Orders.vue'
+import Profile from './views/Profile.vue'
+
+import store from './store'
+
+import auth from './middlewares/auth'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
       name: 'home',
       component: Home,
       meta: {
-        title: 'Главная'
+        title: 'Главная',
       }
     },
     {
@@ -25,7 +32,7 @@ export default new Router({
       name: 'login',
       component: () => import('@/views/Login.vue'),
       meta: {
-        title: 'Авторизация'
+        title: 'Авторизация',
       }
     },
     {
@@ -33,7 +40,7 @@ export default new Router({
       name: 'registration',
       component: () => import('@/views/Registration.vue'),
       meta: {
-        title: 'Регистрация'
+        title: 'Регистрация',
       }
     },
     {
@@ -41,7 +48,17 @@ export default new Router({
       name: 'form',
       component: Form,
       meta: {
-        title: 'Запись на прием'
+        title: 'Запись на прием',
+        middleware: auth,
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: Profile,
+      meta: {
+        title: 'Профиль',
+        middleware: auth,
       }
     },
     {
@@ -49,7 +66,8 @@ export default new Router({
       name: 'card',
       component: ClientCard,
       meta: {
-        title: 'Электронная карточка'
+        title: 'Электронная карточка',
+        middleware: auth,
       }
     },
     {
@@ -57,7 +75,8 @@ export default new Router({
       name: 'orders',
       component: Orders,
       meta: {
-        title: 'Ближайшие посещения'
+        title: 'Ближайшие посещения',
+        middleware: auth,
       }
     },
     {
@@ -65,7 +84,8 @@ export default new Router({
       name: 'card-report',
       component: CardReport,
       meta: {
-        title: 'Отчет о приеме врача'
+        title: 'Отчет о приеме врача',
+        middleware: auth,
       }
     },
     {
@@ -88,3 +108,45 @@ export default new Router({
     }
   ]
 })
+
+// Creates a `nextMiddleware()` function which not only
+// runs the default `next()` callback but also triggers
+// the subsequent Middleware function.
+async function nextFactory(context, middleware, index) {
+  const subsequentMiddleware = middleware[index]
+  // If no subsequent Middleware exists,
+  // the default `next()` callback is returned.
+  if (!subsequentMiddleware) return context.next
+
+  return async (...parameters) => {
+    // Run the default Vue Router `next()` callback first.
+    context.next(...parameters)
+    // Then run the subsequent Middleware with a new
+    // `nextMiddleware()` callback.
+    const nextMiddleware = nextFactory(context, middleware, index + 1)
+    await subsequentMiddleware({...context, next: nextMiddleware})
+  };
+}
+
+router.beforeEach(async (to, from, next) => {
+  if (to.meta.middleware) {
+    const middleware = Array.isArray(to.meta.middleware)
+      ? to.meta.middleware
+      : [to.meta.middleware]
+
+    const context = {
+      from,
+      next,
+      store,
+      router,
+      to,
+    }
+    const nextMiddleware = nextFactory(context, middleware, 1)
+
+    return await middleware[0]({...context, next: nextMiddleware})
+  }
+
+  return next()
+});
+
+export default router
