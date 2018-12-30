@@ -5,32 +5,78 @@
                 <v-flex xs12 sm8 md4>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
-                            <v-toolbar-title>Специализация врача</v-toolbar-title>
-                        </v-toolbar>
-                        <v-card-text>
-                           <v-select
-                                   :items="specializations"
-                                   item-value="uniqueTitle"
-                                   item-text="title"
-                                   label="Специализация врача"
-                                   v-model="form.specialization"
-                           ></v-select>
-                        </v-card-text>
-                    </v-card>
-                    <v-card class="elevation-12">
-                        <v-toolbar dark color="primary">
-                            <v-toolbar-title>Врач</v-toolbar-title>
+                            <v-toolbar-title>Тип записи</v-toolbar-title>
                         </v-toolbar>
                         <v-card-text>
                             <v-select
-                                    :items="doctors"
-                                    item-value="fullName"
-                                    item-text=""
-                                    label="Врач"
-                                    v-model="form.doctor"
+                                    :items="types"
+                                    item-value="isAnalyse"
+                                    item-text="title"
+                                    label="Тип записи"
+                                    v-model="form.isAnalyse"
                             ></v-select>
                         </v-card-text>
                     </v-card>
+                    <template v-if="form.isAnalyse === false">
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-toolbar-title>Специализация врача</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-select
+                                        :items="specializations"
+                                        item-value="uniqueTitle"
+                                        item-text="title"
+                                        label="Специализация врача"
+                                        v-model="form.specialization"
+                                ></v-select>
+                            </v-card-text>
+                        </v-card>
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-toolbar-title>Врач</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-select
+                                        :items="doctors"
+                                        item-value="fullName"
+                                        item-text=""
+                                        label="Врач"
+                                        v-model="form.doctor"
+                                ></v-select>
+                            </v-card-text>
+                        </v-card>
+                    </template>
+                    <template v-if="form.isAnalyse === true">
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-toolbar-title>Тип исследования</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-select
+                                        :items="analyseTypes"
+                                        item-value="uniqueTitle"
+                                        item-text="title"
+                                        label="Тип исследования"
+                                        v-model="form.analyseType"
+                                ></v-select>
+                            </v-card-text>
+                        </v-card>
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-toolbar-title>Анализ или исследование</v-toolbar-title>
+                            </v-toolbar>
+                            <v-card-text>
+                                <v-select
+                                        :items="analyses"
+                                        item-value="uniqueTitle"
+                                        item-text="title"
+                                        label="Анализ или исследование"
+                                        v-model="form.analyse"
+                                ></v-select>
+                            </v-card-text>
+                        </v-card>
+                    </template>
                     <v-card class="elevation-12">
                         <v-toolbar dark color="primary">
                             <v-toolbar-title>Дата посещения</v-toolbar-title>
@@ -186,7 +232,12 @@
     name: 'Form',
     data () {
       return {
+        analyseTypes: [],
+        analyses: [],
         form: {
+          isAnalyse: null,
+          analyseType: null,
+          analyse: null,
           specialization: null,
           doctor: null,
           date: moment().format('YYYY-MM-DD'),
@@ -212,6 +263,10 @@
           {text: 'Медицинская страховка', value: 'INSURANCE'}
         ],
         specializations: [],
+        types: [
+          { title: 'Прием у врача', isAnalyse: false },
+          { title: 'Анализы и исследования', isAnalyse: true },
+        ],
         doctors: [],
         availableTime: {}
       }
@@ -256,10 +311,26 @@
       },
       'form.date': function () {
         this.form.time = ''
+      },
+      'form.isAnalyse': async function (analyse) {
+        if (analyse === true) {
+          this.form.specialization = null
+          this.form.doctor = null
+
+          this.analyseTypes  = (await api.analyseTypesList()).data
+        } else if (analyse === false) {
+          this.form.analyseType = null
+          this.form.analyse = null
+
+          this.specializations = (await api.specializations()).data
+        }
+      },
+      'form.analyseType': async function (type) {
+        this.analyses = (await api.analyses(type)).data
+      },
+      'form.analyse': async function (analyse) {
+        this.availableTime = groupBy((await api.analysesTime(this.form.analyseType, analyse)).data, 'date')
       }
-    },
-    async created () {
-      this.specializations = (await api.specializations()).data;
     },
     methods: {
       allowedDates (val) {

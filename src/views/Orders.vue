@@ -19,7 +19,8 @@
                                         <v-layout align-center justify-space-between row class="text-sm-center">
                                             <v-flex md2>{{ item.date | formatted_date }} {{ item.time | hm_time }}</v-flex>
                                             <v-flex md8>
-                                                <v-list-tile-title>Специализация врача: {{ item.specialization }}</v-list-tile-title>
+                                                <v-list-tile-title v-if="item.isAnalyse === false">Специализация врача: {{ item.specialization }}</v-list-tile-title>
+                                                <v-list-tile-title v-if="item.isAnalyse === true">{{ item.analyse }}</v-list-tile-title>
                                                 <v-list-tile-sub-title>Врач: {{ item.doctor }}</v-list-tile-sub-title>
                                                 <v-list-tile-sub-title>Форма обслуживания: {{ translateService(item.service) }}</v-list-tile-sub-title>
                                             </v-flex>

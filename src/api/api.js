@@ -12,6 +12,10 @@ export default {
   doctors: specialization => api.get(`/specializations/${specialization}`),
   time: (specialization, doctor) => api.post('/time', { specialization, doctor }),
 
+  analyseTypesList: () => api.get('/analyseTypes'),
+  analyses: analyseType => api.get(`/analyseTypes/${analyseType}`),
+  analysesTime: (analyseType, analyse) => api.post('/analyseTime', { analyseType, analyse }),
+
   createOrder: data => api.post('/order', data),
   listOrders: status => api.get('/order', { params: { status } }),
   cancelOrder: id => api.post(`/order/${id}/cancel`)
