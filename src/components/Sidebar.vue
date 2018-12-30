@@ -20,12 +20,12 @@
         <v-toolbar-items>
             <v-divider vertical></v-divider>
 
+            <v-btn
+                    flat
+                    @click="$router.push('specializations')"
+            >Врачи</v-btn>
+            <v-divider vertical></v-divider>
             <template v-if="isLoggedIn">
-                <v-btn
-                        flat
-                        @click="$router.push('specializations')"
-                >Врачи</v-btn>
-                <v-divider vertical></v-divider>
                 <v-btn
                         flat
                         @click="$router.push('form')"
