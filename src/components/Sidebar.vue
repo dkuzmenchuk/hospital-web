@@ -44,6 +44,11 @@
                         flat
                         @click="$router.push('profile')"
                 >Профиль</v-btn>
+                <v-divider vertical></v-divider>
+                <v-btn
+                        flat
+                        @click="logout"
+                >Выйти</v-btn>
             </template>
             <template v-else>
                 <v-btn
@@ -56,6 +61,7 @@
 </template>
 
 <script>
+  import cookie from 'js-cookie'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -64,6 +70,13 @@
       ...mapGetters([
         'isLoggedIn',
       ])
+    },
+    methods: {
+      logout () {
+        cookie.remove('token')
+        this.$store.commit('setUser', undefined)
+        this.$router.push({ name: 'login' })
+      }
     }
   }
 </script>
