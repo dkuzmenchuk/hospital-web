@@ -15,20 +15,10 @@
                                     :key="item.title"
                             >
                                 <v-list-tile-content>
-                                    <v-container>
-                                        <v-layout align-center justify-space-between row class="text-sm-center">
-                                            <v-flex md2>{{ item.date | formatted_date }} {{ item.time | hm_time }}</v-flex>
-                                            <v-flex md8>
-                                                <v-list-tile-title v-if="item.isAnalyse === false">Специализация врача: {{ item.specialization }}</v-list-tile-title>
-                                                <v-list-tile-title v-if="item.isAnalyse === true">{{ item.analyse }}</v-list-tile-title>
-                                                <v-list-tile-sub-title>Врач: {{ item.doctor }}</v-list-tile-sub-title>
-                                                <v-list-tile-sub-title>Форма обслуживания: {{ translateService(item.service) }}</v-list-tile-sub-title>
-                                            </v-flex>
-                                            <v-flex md2>
-                                                <v-btn dark color="red lighten-1" @click="cancel(item.id)">Отменить</v-btn>
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-container>
+                                    <component
+                                            :is="orderComponentName"
+                                            :order="item"
+                                    ></component>
                                 </v-list-tile-content>
                             </v-list-tile>
                         </template>
@@ -41,39 +31,32 @@
 
 <script>
   import api from '@/api/api'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'Orders',
+    components: {
+      ClientOrder: () => import('@/components/orders/ClientOrder.vue'),
+      DoctorOrder: () => import('@/components/orders/DoctorOrder.vue'),
+    },
     data () {
       return {
         items: []
       }
     },
+    computed: {
+      orderComponentName () {
+        return this.isClient ? 'ClientOrder' : 'DoctorOrder'
+      },
+      ...mapGetters([
+        'isClient',
+      ]),
+    },
     async mounted () {
       this.items = (await api.listOrders('WAITING')).data
     },
-    methods: {
-      translateService: service => {
-        switch (service) {
-          case 'PAID':
-            return 'Платно'
-          case 'INSURANCE':
-            return 'По страховке'
-          default:
-            return ''
-        }
-      },
-      cancel: async id => {
-        const result = (await api.cancelOrder(id)).data
-
-        console.log(result)
-      }
-    }
   }
 </script>
 
 <style scoped>
-    .v-list__tile__title {
-        text-align: center;
-    }
 </style>

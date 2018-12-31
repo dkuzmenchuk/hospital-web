@@ -27,6 +27,7 @@
             <v-divider vertical></v-divider>
             <template v-if="isLoggedIn">
                 <v-btn
+                        v-if="isClient"
                         flat
                         @click="$router.push('form')"
                 >Записаться на прием</v-btn>
@@ -35,7 +36,9 @@
                         flat
                         @click="$router.push('orders')"
                 >Записи</v-btn>
-                <v-divider vertical></v-divider><v-btn
+                <v-divider vertical></v-divider>
+                <v-btn
+                        v-if="isClient"
                         flat
                         @click="$router.push('card')"
                 >Карточка</v-btn>
@@ -69,6 +72,7 @@
     computed: {
       ...mapGetters([
         'isLoggedIn',
+        'isClient',
       ])
     },
     methods: {

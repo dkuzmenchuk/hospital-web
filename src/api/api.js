@@ -18,5 +18,7 @@ export default {
 
   createOrder: data => api.post('/order', data),
   listOrders: status => api.get('/order', { params: { status } }),
-  cancelOrder: id => api.post(`/order/${id}/cancel`)
+  cancelOrder: id => api.post(`/order/${id}/cancel`),
+  updateOrder: (id, data) => api.post(`/order/${id}`, data),
+  order: id => api.get(`/order/${id}`)
 }

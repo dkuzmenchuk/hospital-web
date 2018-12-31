@@ -13,55 +13,41 @@
                 <v-text-field
                         label="Дата"
                         type="text"
-                        v-model="report.date"
+                        v-model="order.date"
                         box
                         readonly
                 ></v-text-field>
                 <v-text-field
-                        label="Фамилия"
+                        label="Пациент"
                         type="text"
-                        v-model="report.lastName"
-                        box
-                        readonly
-                ></v-text-field>
-                <v-text-field
-                        label="Имя"
-                        type="text"
-                        v-model="report.firstName"
-                        box
-                        readonly
-                ></v-text-field>
-                <v-text-field
-                        label="Отчество"
-                        type="text"
-                        v-model="report.patronymic"
+                        v-model="order.user"
                         box
                         readonly
                 ></v-text-field>
                 <v-textarea
                         label="Жалобы"
-                        v-model="report.complaint"
+                        v-model="order.report.complaint"
                         rows="1"
                         auto-grow
                 >
                 </v-textarea>
                 <v-textarea
                         label="Протокол исследования"
-                        v-model="report.protocol"
+                        v-model="order.report.protocol"
                         rows="1"
                         auto-grow
                 >
                 </v-textarea>
                 <v-textarea
                         label="Диагноз"
-                        v-model="report.conclusion"
+                        v-model="order.report.conclusion"
                         rows="1"
                         auto-grow
                 >
                 </v-textarea>
                 <v-textarea
                         label="Рекомендовано"
-                        v-model="report.recommendations"
+                        v-model="order.report.recommendations"
                         rows="1"
                         auto-grow
                 >
@@ -75,24 +61,35 @@
 </template>
 
 <script>
+  import api from '@/api/api'
+
   export default {
     name: 'CardReport',
     data () {
       return {
-        report: {
-          date: '2018-08-16',
-          lastName: 'Сидоров',
-          firstName: 'Иван',
-          patronymic: 'Петрович',
+        order: {}
+      }
+    },
+    async mounted () {
+      const response = await api.order(this.$route.params.id)
+
+      let order = response.data
+      if (!order.report) {
+        order.report = {
           complaint: '',
+          protocol: '',
           conclusion: '',
           recommendations: '',
         }
       }
+
+      this.order = order
     },
     methods: {
-      update: async () => {
-        return true;
+      async update () {
+        const response = await api.updateOrder(this.order.id, this.order.report)
+
+        console.log(response.data)
       }
     }
   }

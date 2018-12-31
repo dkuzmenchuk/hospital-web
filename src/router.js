@@ -91,11 +91,11 @@ const router = new Router({
       }
     },
     {
-      path: '/card-report',
+      path: '/orders/:id/card-report',
       name: 'card-report',
       component: CardReport,
       meta: {
-        title: 'Отчет о приеме врача',
+        title: 'Отчет о приеме',
         middleware: auth,
       }
     },
