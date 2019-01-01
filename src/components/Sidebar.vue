@@ -26,23 +26,44 @@
             >Врачи</v-btn>
             <v-divider vertical></v-divider>
             <template v-if="isLoggedIn">
-                <v-btn
-                        v-if="isClient"
-                        flat
-                        @click="$router.push('form')"
-                >Записаться на прием</v-btn>
-                <v-divider vertical></v-divider>
-                <v-btn
-                        flat
-                        @click="$router.push(isClient ? 'client-orders' : 'doctor-orders')"
-                >Записи</v-btn>
-                <v-divider vertical></v-divider>
-                <v-btn
-                        v-if="isClient"
-                        flat
-                        @click="$router.push('card')"
-                >Карточка</v-btn>
-                <v-divider vertical></v-divider>
+                <template v-if="isClient">
+                    <v-btn
+                            v-if="isClient"
+                            flat
+                            @click="$router.push('form')"
+                    >Записаться на прием</v-btn>
+                    <v-divider vertical></v-divider>
+                    <v-btn
+                            flat
+                            @click="$router.push(isClient ? 'client-orders' : 'doctor-orders')"
+                    >Записи</v-btn>
+                    <v-divider vertical></v-divider>
+                    <v-btn
+                            v-if="isClient"
+                            flat
+                            @click="$router.push('card')"
+                    >Карточка</v-btn>
+                    <v-divider vertical></v-divider>
+                </template>
+                <template v-if="isDoctor">
+                    <v-btn
+                            flat
+                            @click="$router.push(isClient ? 'client-orders' : 'doctor-orders')"
+                    >Записи</v-btn>
+                    <v-divider vertical></v-divider>
+                </template>
+                <template v-if="isAdmin">
+                    <v-btn
+                            flat
+                            @click="$router.push('create-doctor')"
+                    >Добавить врача</v-btn>
+                    <v-divider vertical></v-divider>
+                    <v-btn
+                            flat
+                            @click="$router.push('working-time')"
+                    >Добавить расписание</v-btn>
+                    <v-divider vertical></v-divider>
+                </template>
                 <v-btn
                         flat
                         @click="$router.push('profile')"
@@ -54,6 +75,11 @@
                 >Выйти</v-btn>
             </template>
             <template v-else>
+                <v-btn
+                        flat
+                        @click="$router.push('registration')"
+                >Зарегистрироваться</v-btn>
+                <v-divider vertical></v-divider>
                 <v-btn
                         flat
                         @click="$router.push('login')"
@@ -73,6 +99,8 @@
       ...mapGetters([
         'isLoggedIn',
         'isClient',
+        'isDoctor',
+        'isAdmin',
       ])
     },
     methods: {

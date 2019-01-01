@@ -26,7 +26,7 @@
                                                 <v-list-tile-sub-title>Форма обслуживания: {{ translateService(item.service) }}</v-list-tile-sub-title>
                                             </v-flex>
                                             <v-flex md2>
-                                                <v-btn dark color="teal">Отчет</v-btn>
+                                                <v-btn dark color="teal" @click="report(item.id)">Отчет</v-btn>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -63,6 +63,9 @@
           default:
             return ''
         }
+      },
+      report (id) {
+        this.$router.push({ name: 'card-report', params: { id } })
       }
     }
   }

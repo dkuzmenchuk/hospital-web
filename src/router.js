@@ -120,7 +120,7 @@ const router = new Router({
       component: CreateDoctor,
       meta: {
         title: 'Создание аккаунта',
-        // middleware: [auth, admin]
+        middleware: [auth, admin]
       }
     },
     {
@@ -129,7 +129,7 @@ const router = new Router({
       component: WorkingTime,
       meta: {
         title: 'Рабочее время',
-        // middleware: [auth, admin]
+        middleware: [auth, admin]
       }
     },
     {

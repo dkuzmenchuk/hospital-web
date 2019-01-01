@@ -29,6 +29,8 @@
                         v-model="order.report.complaint"
                         rows="1"
                         auto-grow
+                        :box="!isDoctor"
+                        :readonly="!isDoctor"
                 >
                 </v-textarea>
                 <v-textarea
@@ -36,6 +38,8 @@
                         v-model="order.report.protocol"
                         rows="1"
                         auto-grow
+                        :box="!isDoctor"
+                        :readonly="!isDoctor"
                 >
                 </v-textarea>
                 <v-textarea
@@ -43,6 +47,8 @@
                         v-model="order.report.conclusion"
                         rows="1"
                         auto-grow
+                        :box="!isDoctor"
+                        :readonly="!isDoctor"
                 >
                 </v-textarea>
                 <v-textarea
@@ -50,10 +56,12 @@
                         v-model="order.report.recommendations"
                         rows="1"
                         auto-grow
+                        :box="!isDoctor"
+                        :readonly="!isDoctor"
                 >
                 </v-textarea>
             </v-card-text>
-            <v-card-actions>
+            <v-card-actions v-if="isDoctor">
                 <v-btn dark color="teal" @click="update">Сохранить</v-btn>
             </v-card-actions>
         </v-card>
@@ -62,6 +70,7 @@
 
 <script>
   import api from '@/api/api'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'CardReport',
@@ -69,6 +78,11 @@
       return {
         order: {}
       }
+    },
+    computed: {
+      ...mapGetters([
+        'isDoctor',
+      ])
     },
     async mounted () {
       const response = await api.order(this.$route.params.id)

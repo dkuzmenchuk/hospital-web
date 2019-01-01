@@ -1,16 +1,16 @@
 <template>
     <v-card color="grey lighten-2" class="black--text">
         <v-layout row>
-            <v-flex xs4>
-                <v-img
-                        :src="doctor.photo || 'https://cdn.vuetifyjs.com/images/cards/halcyon.png'"
-                        height="125px"
-                        contain
-                ></v-img>
-            </v-flex>
-            <v-flex xs8>
+            <!--<v-flex xs4>-->
+                <!--<v-img-->
+                        <!--:src="doctor.photo || 'https://cdn.vuetifyjs.com/images/cards/halcyon.png'"-->
+                        <!--height="125px"-->
+                        <!--contain-->
+                <!--&gt;</v-img>-->
+            <!--</v-flex>-->
+            <v-flex xs12>
                 <v-card-text
-                        style="text-align: left"
+                        style="text-align: center"
                 >
                     <div>Доктор: {{ fullName }}</div>
                     <div>Специализация: {{ doctor.specialization }}</div>
