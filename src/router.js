@@ -12,12 +12,14 @@ import ClientOrders from './views/ClientOrders.vue'
 import DoctorOrders from './views/DoctorOrders.vue'
 import Profile from './views/Profile.vue'
 import UpdatePassword from './views/UpdatePassword.vue'
+import CreateDoctor from './views/CreateDoctor.vue'
 
 import store from './store'
 
 import auth from './middlewares/auth'
 import client from './middlewares/client'
 import doctor from './middlewares/doctor'
+import admin from './middlewares/admin'
 
 Vue.use(Router)
 
@@ -109,6 +111,15 @@ const router = new Router({
       meta: {
         title: 'Отчет о приеме',
         middleware: auth,
+      }
+    },
+    {
+      path: '/create-doctor',
+      name: 'create-doctor',
+      component: CreateDoctor,
+      meta: {
+        title: 'Создание аккаунта',
+        // middleware: [auth, admin]
       }
     },
     {

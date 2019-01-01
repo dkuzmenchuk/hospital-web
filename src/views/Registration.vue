@@ -107,9 +107,6 @@
     computed: {
       maxDobDate: function () {
         return moment().format('YYYY-MM-DD')
-      },
-      minDateOfVisit: function () {
-        return moment().format('YYYY-MM-DD')
       }
     },
     methods: {

@@ -22,4 +22,6 @@ export default {
   updateOrder: (id, data) => api.post(`/order/${id}`, data),
   order: id => api.get(`/order/${id}`),
   missedOrder: id => api.post(`/order/${id}/missed`),
+
+  createDoctor: credentials => api.post('/doctor', credentials),
 }
