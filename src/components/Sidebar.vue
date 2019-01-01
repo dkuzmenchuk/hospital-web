@@ -34,7 +34,7 @@
                 <v-divider vertical></v-divider>
                 <v-btn
                         flat
-                        @click="$router.push('orders')"
+                        @click="$router.push(isClient ? 'client-orders' : 'doctor-orders')"
                 >Записи</v-btn>
                 <v-divider vertical></v-divider>
                 <v-btn

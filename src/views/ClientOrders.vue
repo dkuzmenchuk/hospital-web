@@ -15,10 +15,9 @@
                                     :key="item.title"
                             >
                                 <v-list-tile-content>
-                                    <component
-                                            :is="orderComponentName"
+                                    <client-order
                                             :order="item"
-                                    ></component>
+                                    ></client-order>
                                 </v-list-tile-content>
                             </v-list-tile>
                         </template>
@@ -31,26 +30,16 @@
 
 <script>
   import api from '@/api/api'
-  import { mapGetters } from 'vuex'
 
   export default {
-    name: 'Orders',
+    name: 'ClientOrders',
     components: {
       ClientOrder: () => import('@/components/orders/ClientOrder.vue'),
-      DoctorOrder: () => import('@/components/orders/DoctorOrder.vue'),
     },
     data () {
       return {
         items: []
       }
-    },
-    computed: {
-      orderComponentName () {
-        return this.isClient ? 'ClientOrder' : 'DoctorOrder'
-      },
-      ...mapGetters([
-        'isClient',
-      ]),
     },
     async mounted () {
       this.items = (await api.listOrders('WAITING')).data
@@ -59,4 +48,7 @@
 </script>
 
 <style scoped>
+    .v-btn--active {
+        color: black;
+    }
 </style>

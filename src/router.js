@@ -8,13 +8,16 @@ import Doctors from './views/Doctors.vue'
 import Specializations from './views/Specializations.vue'
 import ClientCard from './views/ClientCard.vue'
 import CardReport from './views/CardReport.vue'
-import Orders from './views/Orders.vue'
+import ClientOrders from './views/ClientOrders.vue'
+import DoctorOrders from './views/DoctorOrders.vue'
 import Profile from './views/Profile.vue'
 import UpdatePassword from './views/UpdatePassword.vue'
 
 import store from './store'
 
 import auth from './middlewares/auth'
+import client from './middlewares/client'
+import doctor from './middlewares/doctor'
 
 Vue.use(Router)
 
@@ -82,12 +85,21 @@ const router = new Router({
       }
     },
     {
-      path: '/orders',
-      name: 'orders',
-      component: Orders,
+      path: '/client-orders',
+      name: 'client-orders',
+      component: ClientOrders,
       meta: {
         title: 'Ближайшие посещения',
-        middleware: auth,
+        middleware: [auth, client]
+      }
+    },
+    {
+      path: '/doctor-orders',
+      name: 'doctor-orders',
+      component: DoctorOrders,
+      meta: {
+        title: 'Ближайшие посещения',
+        middleware: [auth, doctor]
       }
     },
     {
