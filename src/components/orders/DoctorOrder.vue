@@ -30,6 +30,8 @@
 </template>
 
 <script>
+  import api from '@/api/api'
+
   export default {
     name: 'DoctorOrder',
     props: {
@@ -52,8 +54,8 @@
       report () {
         this.$router.push({ name: 'card-report', params: { id: this.order.id } })
       },
-      missed () {
-        return true
+      async missed () {
+        await api.missedOrder(this.order.id)
       }
     }
   }

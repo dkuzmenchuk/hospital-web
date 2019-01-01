@@ -20,5 +20,6 @@ export default {
   listOrders: status => api.get('/order', { params: { status } }),
   cancelOrder: id => api.post(`/order/${id}/cancel`),
   updateOrder: (id, data) => api.post(`/order/${id}`, data),
-  order: id => api.get(`/order/${id}`)
+  order: id => api.get(`/order/${id}`),
+  missedOrder: id => api.post(`/order/${id}/missed`),
 }
