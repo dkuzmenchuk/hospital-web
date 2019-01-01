@@ -16,6 +16,14 @@
                 >
                     Заключение
                 </v-btn>
+                <v-btn
+                        v-if="true"
+                        dark
+                        color="orange lighten-1"
+                        @click="missed"
+                >
+                    Пропущено
+                </v-btn>
             </v-flex>
         </v-layout>
     </v-container>
@@ -43,6 +51,9 @@
       },
       report () {
         this.$router.push({ name: 'card-report', params: { id: this.order.id } })
+      },
+      missed () {
+        return true
       }
     }
   }
