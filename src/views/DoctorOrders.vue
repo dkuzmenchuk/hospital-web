@@ -35,11 +35,13 @@
                                 ></v-divider>
 
                                 <v-list-tile
+                                        class="order-tile"
                                         :key="item.title"
                                 >
                                     <v-list-tile-content>
                                         <doctor-order
                                                 :order="item"
+                                                :status="active"
                                         ></doctor-order>
                                     </v-list-tile-content>
                                 </v-list-tile>
@@ -70,13 +72,13 @@
       await this.todayOrders()
     },
     methods: {
-      todayOrders () {
+      async todayOrders () {
         this.active = 'today'
-        return true;
+        this.items = (await api.listOrders('TODAY')).data
       },
-      futureOrders () {
+      async futureOrders () {
         this.active = 'future'
-        return true;
+        this.items = (await api.listOrders('FUTURE')).data
       }
     }
   }

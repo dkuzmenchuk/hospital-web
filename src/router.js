@@ -13,6 +13,7 @@ import DoctorOrders from './views/DoctorOrders.vue'
 import Profile from './views/Profile.vue'
 import UpdatePassword from './views/UpdatePassword.vue'
 import CreateDoctor from './views/CreateDoctor.vue'
+import WorkingTime from './views/WorkingTime.vue'
 
 import store from './store'
 
@@ -119,6 +120,15 @@ const router = new Router({
       component: CreateDoctor,
       meta: {
         title: 'Создание аккаунта',
+        // middleware: [auth, admin]
+      }
+    },
+    {
+      path: '/working-time',
+      name: 'working-time',
+      component: WorkingTime,
+      meta: {
+        title: 'Рабочее время',
         // middleware: [auth, admin]
       }
     },

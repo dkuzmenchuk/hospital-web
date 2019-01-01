@@ -4,7 +4,7 @@
             dark
     >
         <v-toolbar-items>
-            <v-btn flat @click="$router.push({ name: 'home' })">Больница</v-btn>
+            <v-btn flat @click="$router.push({ name: 'home' })">Альфа</v-btn>
         </v-toolbar-items>
 
         <v-divider

@@ -24,4 +24,6 @@ export default {
   missedOrder: id => api.post(`/order/${id}/missed`),
 
   createDoctor: credentials => api.post('/doctor', credentials),
+
+  createWorkingTime: data => api.post('/workingTime', data)
 }

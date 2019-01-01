@@ -7,7 +7,7 @@
                 <v-list-tile-title>Пациент: {{ order.user }}</v-list-tile-title>
                 <v-list-tile-sub-title>Форма обслуживания: {{ translateService(order.service) }}</v-list-tile-sub-title>
             </v-flex>
-            <v-flex md2>
+            <v-flex md2 v-if="status === 'today'">
                 <v-btn
                         v-if="true"
                         dark
@@ -38,6 +38,10 @@
       order: {
         required: true,
         type: Object,
+      },
+      status: {
+        required: true,
+        type: String,
       }
     },
     methods: {
