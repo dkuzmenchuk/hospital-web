@@ -81,7 +81,7 @@
                                     :items="genders"
                                     label="Пол"
                                     v-model="credentials.gender"
-                                    @input="$v.credentials.gender.$touch()"
+                                    @change="$v.credentials.gender.$touch()"
                                     @blur="$v.credentials.gender.$touch()"
                             ></v-select>
                             <v-select
@@ -89,7 +89,7 @@
                                     :items="countries"
                                     label="Гражданство"
                                     v-model="credentials.nationality"
-                                    @input="$v.credentials.nationality.$touch()"
+                                    @change="$v.credentials.nationality.$touch()"
                                     @blur="$v.credentials.nationality.$touch()"
                             ></v-select>
                             <v-text-field

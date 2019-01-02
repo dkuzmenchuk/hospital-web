@@ -14,6 +14,9 @@
                                     item-text="title"
                                     label="Тип записи"
                                     v-model="form.isAnalyse"
+                                    :error-messages="isAnalyseErrors"
+                                    @change="$v.form.isAnalyse.$touch()"
+                                    @blur="$v.form.isAnalyse.$touch()"
                             ></v-select>
                         </v-card-text>
                     </v-card>
@@ -29,6 +32,9 @@
                                         item-text="title"
                                         label="Специализация врача"
                                         v-model="form.specialization"
+                                        :error-messages="specializationErrors"
+                                        @change="$v.form.specialization.$touch()"
+                                        @blur="$v.form.specialization.$touch()"
                                 ></v-select>
                             </v-card-text>
                         </v-card>
@@ -43,6 +49,9 @@
                                         item-text=""
                                         label="Врач"
                                         v-model="form.doctor"
+                                        :error-messages="doctorErrors"
+                                        @change="$v.form.doctor.$touch()"
+                                        @blur="$v.form.doctor.$touch()"
                                 ></v-select>
                             </v-card-text>
                         </v-card>
@@ -59,6 +68,9 @@
                                         item-text="title"
                                         label="Тип исследования"
                                         v-model="form.analyseType"
+                                        :error-messages="analyseTypeErrors"
+                                        @change="$v.form.analyseType.$touch()"
+                                        @blur="$v.form.analyseType.$touch()"
                                 ></v-select>
                             </v-card-text>
                         </v-card>
@@ -73,6 +85,9 @@
                                         item-text="title"
                                         label="Анализ или исследование"
                                         v-model="form.analyse"
+                                        :error-messages="analyseErrors"
+                                        @change="$v.form.analyse.$touch()"
+                                        @blur="$v.form.analyse.$touch()"
                                 ></v-select>
                             </v-card-text>
                         </v-card>
@@ -131,6 +146,9 @@
                                     item-value="value"
                                     label="Форма обслуживания"
                                     v-model="form.service"
+                                    :error-messages="serviceErrors"
+                                    @change="$v.form.service.$touch()"
+                                    @blur="$v.form.service.$touch()"
                             ></v-select>
                         </v-card-text>
                     </v-card>
@@ -145,11 +163,17 @@
                                     :items="insuranceCompanies"
                                     label="Страховая компания"
                                     v-model="form.insuranceCompany"
+                                    :error-messages="insuranceCompanyErrors"
+                                    @change="$v.form.insuranceCompany.$touch()"
+                                    @blur="$v.form.insuranceCompany.$touch()"
                             ></v-select>
                             <v-text-field
                                     label="Номер страхового полиса"
                                     type="text"
                                     v-model="form.insurancePolicyNumber"
+                                    :error-messages="insurancePolicyNumberErrors"
+                                    @input="$v.form.insurancePolicyNumber.$touch()"
+                                    @blur="$v.form.insurancePolicyNumber.$touch()"
                             ></v-text-field>
                             <v-dialog
                                     ref="insurancePolicyStartDate"
@@ -165,6 +189,9 @@
                                         v-model="form.insurancePolicyStartDate"
                                         label="Дата начала действия полиса"
                                         readonly
+                                        :error-messages="insurancePolicyStartDateErrors"
+                                        @input="$v.form.insurancePolicyStartDate.$touch()"
+                                        @blur="$v.form.insurancePolicyStartDate.$touch()"
                                 ></v-text-field>
                                 <v-date-picker
                                         locale="ru-ru"
@@ -190,6 +217,9 @@
                                         v-model="form.insurancePolicyEndDate"
                                         label="Дата окончания действия полиса"
                                         readonly
+                                        :error-messages="insurancePolicyEndDateErrors"
+                                        @input="$v.form.insurancePolicyEndDate.$touch()"
+                                        @blur="$v.form.insurancePolicyEndDate.$touch()"
                                 ></v-text-field>
                                 <v-date-picker
                                         :min="insurancePolicyEndDateMin"
@@ -227,9 +257,27 @@
   import moment from 'moment'
   import api from '@/api/api'
   import groupBy from 'lodash/groupBy'
+  import { validationMixin } from 'vuelidate'
+  import { required, requiredIf } from 'vuelidate/lib/validators'
 
   export default {
     name: 'Form',
+    mixins: [ validationMixin ],
+    validations: {
+      form: {
+        isAnalyse: { required },
+        analyseType: { required: requiredIf(function () { return this.form.isAnalyse === true }) },
+        analyse: { required: requiredIf(function () { return this.form.isAnalyse === true }) },
+        specialization: { required: requiredIf(function () { return this.form.isAnalyse === false }) },
+        doctor: { required: requiredIf(function () { return this.form.isAnalyse === false }) },
+        service: { required },
+        notes: '',
+        insuranceCompany: { required: requiredIf(function () { return this.form.service === 'INSURANCE' }) },
+        insurancePolicyNumber: { required: requiredIf(function () { return this.form.service === 'INSURANCE' }) },
+        insurancePolicyStartDate: { required: requiredIf(function () { return this.form.service === 'INSURANCE' }) },
+        insurancePolicyEndDate: { required: requiredIf(function () { return this.form.service === 'INSURANCE' }) },
+      },
+    },
     data () {
       return {
         analyseTypes: [],
@@ -294,7 +342,67 @@
         const time = items ? items.map(item => item.time) : []
 
         return time.sort()
-      }
+      },
+      isAnalyseErrors () {
+        const errors = []
+        if (!this.$v.form.isAnalyse.$error) return errors
+        !this.$v.form.isAnalyse.required && errors.push('Тип записи обязателен')
+        return errors
+      },
+      analyseTypeErrors () {
+        const errors = []
+        if (!this.$v.form.analyseType.$error) return errors
+        !this.$v.form.analyseType.required && errors.push('Тип исследования обязателен')
+        return errors
+      },
+      analyseErrors () {
+        const errors = []
+        if (!this.$v.form.analyse.$error) return errors
+        !this.$v.form.analyse.required && errors.push('Исследование обязательно')
+        return errors
+      },
+      specializationErrors () {
+        const errors = []
+        if (!this.$v.form.specialization.$error) return errors
+        !this.$v.form.specialization.required && errors.push('Специализация врача обязательна')
+        return errors
+      },
+      doctorErrors () {
+        const errors = []
+        if (!this.$v.form.doctor.$error) return errors
+        !this.$v.form.doctor.required && errors.push('Врач обязателен')
+        return errors
+      },
+      serviceErrors () {
+        const errors = []
+        if (!this.$v.form.service.$error) return errors
+        !this.$v.form.service.required && errors.push('Тип обслуживания обязателен')
+        return errors
+      },
+      insuranceCompanyErrors () {
+        const errors = []
+        if (!this.$v.form.insuranceCompany.$error) return errors
+        !this.$v.form.insuranceCompany.required && errors.push('Страховая компания обязательна')
+        return errors
+      },
+      insurancePolicyNumberErrors () {
+        const errors = []
+        if (!this.$v.form.insurancePolicyNumber.$error) return errors
+        !this.$v.form.insurancePolicyNumber.required && errors.push('Номер страхового полиса обязателен')
+        return errors
+      },
+      insurancePolicyStartDateErrors () {
+        const errors = []
+        if (!this.$v.form.insurancePolicyStartDate.$error) return errors
+        !this.$v.form.insurancePolicyStartDate.required && errors.push('Дата начала действия страхового полиса обязательна')
+        return errors
+      },
+      insurancePolicyEndDateErrors () {
+        const errors = []
+        if (!this.$v.form.insurancePolicyEndDate.$error) return errors
+        !this.$v.form.insurancePolicyEndDate.required && errors.push('Дата окончания действия страхового полиса обязательна')
+        return errors
+      },
     },
     watch: {
       'form.specialization': async function (specialization) {
@@ -346,9 +454,15 @@
         this.form.time = time;
       },
       async apply () {
-        const { data: response } = await api.createOrder(this.form)
+        console.log('touch')
+        this.$v.$touch()
+        console.log(this.$v.$error)
+        if (this.$v.$error === false) {
+          console.log('apply!')
+          const { data: response } = await api.createOrder(this.form)
 
-        console.log(response)
+          console.log(response)
+        }
       }
     }
   }
